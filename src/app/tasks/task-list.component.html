@@ -1,0 +1,58 @@
+
+<div class="container">
+    <div class="todo-list">
+
+      <!-- במקום לתת פונקציה לכפתור   -->
+      <!-- ניתן אותה לטופס  -->
+      <!-- הכוונה לפונקציה  add() -->
+      <form (ngSubmit)="add(taskNgForm);" #taskNgForm="ngForm">
+
+        <!--  שורת התאריך בטופס -->
+        <div class="input-group">
+          <!-- זה הוא שדה שבתוכו יש תאריך שקיבלתי מהעמוד הקודם וחילצתי מהנתיב  -->
+          <input readonly name ="date" [matDatepicker]="picker" [(ngModel)]="newTask.date"> <!-- בתוך השורה יהיה התוכן של המשתנה  --> <!-- readonly המשתמש לא יכול להזין דבר חוץ מבחירת תאריך -->
+
+          <!--  תגית מיוחד לבחירת תאריך הכוונה לאייקון   -->
+          <!--  גורם לאייקון להפתח ולבחור תאריך אחר -->
+          <mat-datepicker-toggle [for]="picker"></mat-datepicker-toggle> <!-- שורה זו גורמת לאייקון תאריך להפתח בהתאם לתוכן התאריך שהוא מקבל -->
+          <mat-datepicker #picker></mat-datepicker><!-- מקבל את התוכן משורה 13  local reference #-->
+        </div>
+    
+        <div class="input-group">
+          <!-- נגדיר כמות מינימלית של תוים שיש להכניס -->
+          <input #newTaskNgModel="ngModel" required minlength="3" name ="taskTitle" type="text" placeholder="Todo" [(ngModel)]="newTask.title">  <!-- [(ngModel)] בננה בקופסא ו localreference #-->
+          <button class="add-button">+</button> 
+        </div>
+        <!--  כל עוד האינפוט ריק יופיע הדיב הזה -->  <!-- dirty =  נגעתה גם עם החזרתה הכל למקום touched = נגעתה -->
+        <div *ngIf="newTaskNgModel.invalid && (newTaskNgModel.touched || newTaskNgModel.dirty )" class="validation-error"> 
+          <!-- במידה ונגעתי בשורת האינפוט יופיעה השורה הבא -->
+          <div *ngIf="newTaskNgModel.errors?.['required']"> <!-- מגיעה משורה 28  required -->
+            Task is required. <!-- אומר למשתמש שיש למלא שדה זה -->
+          </div>
+          <!-- במידה ואני מכניס רק 3 תוים -->
+          <div *ngIf="newTaskNgModel.errors?.['minlength']"> <!-- מגיעה משורה 23  minlength -->
+            Task need to be at leat 3 characters long. <!-- אומר למשתמש שיש להכניס מעל 3 תוים -->
+          </div>
+        </div>
+
+      </form>
+      
+      <!-- טבלה המראה את כל המשימות -->
+      <table>
+        <!-- נתתי ביטוי לאינדקס במידה והוא זוגי יופעל משהוא אחד במידה ולא יקושט במשדהוא אחר   -->
+        <tr *ngFor="let task of tasks; let i = index" [class.even]="i%2==0" [class.odd]="i%2" > <!-- לולאה שרצה כמספר המשימות -->
+          <td>
+            <!-- פה יופיעה במידה והמשימה גמורה או לא בהתאם לערך הבוליאני של השדה -->
+            <p [class.is-done]="task.isDone"> <!-- אן הוא שואל האם המופע הנוכחי הזה באינדקס הנוכחי השדה שלו אמת או לאת -->
+              {{ task.title }} <!-- זה הוא האינדקס המשימה עצמה -->
+            </p>
+          </td>
+          <td>
+            <button (click)="remove(task)" class="remove-button">X</button> <!--  אירוע שמפעיל את הפונקציה הסרה  -->
+            <!-- הטקסט שיופיע בכפתור תלוי בערך הבוליאני של שדה האם גמור בלאס משימות-->
+            <button (click)="task.toggleIsDone()" class="done-button"> {{task.isDone? "Undo" : "Done"}} </button> <!-- אירוע שמפעיל את הפונקציה סיים או לא סיים  -->
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
